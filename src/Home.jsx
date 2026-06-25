@@ -182,9 +182,12 @@ function Section1() {
           <Link to={`/product/${p.id}`} key={p.id} className="hm-product-card">
             <div className="hm-product-card__img">
               <div className="hm-product-card__bg" aria-hidden="true">
-                <img src="/home/product-bg.png" alt="" />
+                <img src={p.bg} alt="" />
               </div>
               <img src={p.img} alt={p.name} className="hm-product-card__shirt" />
+              {p.hoverImg && (
+                <img src={p.hoverImg} alt="" aria-hidden="true" className="hm-product-card__hover" />
+              )}
             </div>
             <div className="hm-product-card__meta">
               <span className="hm-product-card__name">{p.name}</span>
@@ -208,7 +211,7 @@ function Editorial1() {
           {[0, 1, 2].map(i => (
             <div className="hm-ed1__info-line" key={i}>
               <span>Height: 5&rsquo;3&rdquo;</span>
-              <span>wearing: fighter Tee</span>
+              <span>wearing: lil helen Tee</span>
               <span>Color: Dark/yellow</span>
             </div>
           ))}
@@ -226,7 +229,7 @@ function Editorial1() {
 const SP = '/home/story/'
 const STORY_TILES = {
   helenMaroulis:   { src: SP + 'helen-maroulis.webp',   name: 'Helen_Maroulis.jpeg',   ar: '680 / 452' },
-  dylanAccountant: { src: SP + 'dylan-accountant.webp', name: 'Dylan_Accountant.jpeg', ar: '687 / 760' },
+  dylanAccountant: { type: 'video', src: SP + 'dylan-accountant.mp4', poster: SP + 'dylan-accountant-poster.webp', name: 'Car_Donut.mp4', ar: '720 / 406' },
   lilDylan:        { src: SP + 'lil-dylan.webp',        name: 'Lil_Dylan.jpeg',        ar: '1 / 1' },
   suckerPunch:     { src: SP + 'sucker-punch.webp',     name: 'Sucker_Punch.gif',      ar: '1 / 1' },
   helenDylan:      { src: SP + 'helen-dylan.webp',      name: 'Helen_Dylan.jpeg',      ar: '1359 / 1178' },
@@ -249,7 +252,7 @@ const CELL_LAYOUT = [
   { t: T.helenMaroulis,   x: 599,  y: 28,  w: 338 },
   { t: T.suckerPunch,     x: 147,  y: 194, w: 172 },
   { t: T.chip,            x: 400,  y: 327, w: 197 },
-  { t: T.dylanAccountant, x: 39,   y: 410, w: 171 },
+  { t: T.dylanAccountant, x: 39,   y: 410, w: 190 },
   { t: T.helenJig,        x: 102,  y: 660, w: 338 },
   { t: T.helenDylan,      x: 678,  y: 331, w: 338 },
   { t: T.mels,            x: 696,  y: 774, w: 211 },
@@ -258,7 +261,7 @@ const CELL_LAYOUT = [
   { t: T.lowriders,       x: 1346, y: 570, w: 338 },
   { t: T.couchVsCart,     x: 980,  y: 40,  w: 280 },
   { t: T.fighters,        x: 980,  y: 650, w: 320 },
-  { t: T.dylanWrestling,  x: 450,  y: 720, w: 220 },
+  { t: T.dylanWrestling,  x: 450,  y: 720, w: 360 },
 ]
 
 function StoryVideo({ tile }) {
@@ -305,17 +308,6 @@ function StoryTile({ tile }) {
           ? <StoryVideo tile={tile} />
           : <img src={tile.src} alt="" />}
       </div>
-      <figcaption className="hm-story__cap">
-        <span className="hm-story__cap-name">{tile.name}</span>
-        {isVideo
-          ? <img className="hm-story__cap-mp4" src={SP + 'icon-mp4.svg'} alt="" />
-          : (
-            <span className="hm-story__cap-icons">
-              <img src={SP + 'icon-video2d.svg'} alt="" />
-              <img src={SP + 'icon-camera.svg'} alt="" />
-            </span>
-          )}
-      </figcaption>
     </figure>
   )
 }
@@ -463,7 +455,7 @@ function AboutSection() {
 
       <div className="hm-story__head">
         <span className="hm-story__about-pill">About us</span>
-        <p className="hm-story__intro">Helen &amp; Dylan met in Los Angeles and traveled the World on a top secret mission for The United States of America, which will be detailed below. Girl Fight was the outcome of said mission.</p>
+        <p className="hm-story__intro">Helen &amp; Dylan met in Los Angeles and traveled the World on a top secret mission for The United States of America, which will be detailed in the box below. Girl Fight was the outcome of said mission.</p>
       </div>
 
       <div className="hm-story__intel">

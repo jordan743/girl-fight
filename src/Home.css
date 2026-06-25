@@ -718,7 +718,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.15);
+  background: transparent;
 }
 
 .hm-product-card__shirt {
@@ -732,6 +732,21 @@
 }
 
 .hm-product-card:hover .hm-product-card__shirt { transform: scale(1.04); }
+
+/* Alternate lifestyle image revealed on hover (centered, fills the card) */
+.hm-product-card__hover {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.hm-product-card:hover .hm-product-card__hover { opacity: 1; }
 
 /* ─── Editorial 1 (video placeholder) ───────────────────── */
 .hm-ed1 {

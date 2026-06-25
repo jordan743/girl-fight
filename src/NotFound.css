@@ -91,6 +91,27 @@ body.nf-lock { overflow: hidden; height: 100vh; }
 }
 .nf-mute:hover { transform: rotate(-2deg) scale(1.05); }
 
+/* "Back to Girl Fight Apparel" — same chip as the sound button, top-left under the marquee */
+.nf-back {
+  position: absolute;
+  top: 16px;
+  left: 22px;
+  z-index: 10;
+  background: #000;
+  color: var(--yellow);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 6px 10px;
+  border: none;
+  cursor: pointer;
+  transform: rotate(-2deg);
+}
+.nf-back:hover { transform: rotate(-2deg) scale(1.05); }
+
 /* On touch devices the on-screen HIT button owns the bottom-right corner —
    move the sound toggle to the top-right so they don't overlap. */
 @media (pointer: coarse) {
@@ -630,6 +651,7 @@ body.nf-lock { overflow: hidden; height: 100vh; }
 
   /* smaller sound toggle on mobile */
   .nf-mute { font-size: 11px; padding: 5px 8px; }
+  .nf-back { font-size: 11px; padding: 5px 8px; top: 14px; left: 14px; }
 
   /* ── intro — fit the whole screen, no scroll ── */
   .nf-intro {

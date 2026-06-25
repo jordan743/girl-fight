@@ -108,7 +108,8 @@ def cat():
 # ── assemble ─────────────────────────────────────────────
 PINK = (255, 96, 210); DKJACKET = (44, 44, 56)
 sprites = {
-    'dylan':          build((74, 48, 30), None, (242, 242, 242), (40, 44, 60), tee=True),
+    # 'dylan' slot is now Wrestler Helen: long hair, black singlet w/ red side stripes
+    'dylan':          build((232, 200, 118), None, (38, 38, 44), (40, 44, 60), female=True, singlet=True, trim=(190, 40, 55)),
     'helen':          build((230, 198, 120), None, (42, 42, 50), (40, 44, 60), female=True, tee=True),
     'lil-dylan':      build((120, 86, 50), (150, 60, 70), (235, 235, 235), (60, 56, 70), mustache=True),
     'lil-helen':      build((232, 200, 118), None, (38, 38, 44), (40, 44, 60), female=True, singlet=True, trim=(236, 206, 42)),

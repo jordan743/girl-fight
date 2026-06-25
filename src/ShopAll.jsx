@@ -57,8 +57,11 @@ export default function ShopAll() {
         {PRODUCTS.map((p) => (
           <Link to={`/product/${p.id}`} key={p.id} className="sa-card">
             <div className="sa-card__img">
-              <img src="/shop/card-bg.png" alt="" className="sa-card__bg" aria-hidden="true" />
+              <img src={p.bg} alt="" className="sa-card__bg" aria-hidden="true" />
               <img src={p.img} alt={p.name} className="sa-card__shirt" />
+              {p.hoverImg && (
+                <img src={p.hoverImg} alt="" aria-hidden="true" className="sa-card__hover" />
+              )}
             </div>
             <div className="sa-card__meta">
               <span className="sa-card__name">{p.name}</span>

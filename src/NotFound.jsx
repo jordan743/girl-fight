@@ -11,13 +11,13 @@ const LOGO = '/girlfight-logo.webp'
 
 // L→R, row 1 then row 2 — order matches Figma node 551:2455
 const CHARACTERS = [
-  { key: 'dylan',          name: 'Dylan',          portrait: A + 'dylan.webp' },
-  { key: 'chip',           name: 'Chip',           portrait: A + 'chip.webp' },
+  { key: 'dylan',          name: 'Wrestler Helen',  portrait: A + 'wrestler-helen.webp' },
+  { key: 'chip',           name: 'Lil Chip',       portrait: A + 'chip.webp' },
   { key: 'helen',          name: 'Helen',          portrait: A + 'helen.webp' },
   { key: 'lil-dylan',      name: 'Lil Dylan',      portrait: A + 'lil-dylan.webp' },
   { key: 'lil-helen',      name: 'Lil Helen',      portrait: A + 'lil-helen.webp', raw: true },
   { key: 'wrestler-dylan', name: 'Wrestler Dylan', portrait: A + 'wrestler-dylan.webp' },
-  { key: 'the-cat',        name: 'The Cat',        portrait: A + 'the-cat.webp' },
+  { key: 'the-cat',        name: 'Lil Toby',       portrait: A + 'the-cat.webp' },
   { key: 'punk-helen',     name: 'Punk Helen',     portrait: A + 'punk-helen.webp', raw: true },
 ]
 
@@ -32,8 +32,11 @@ const Logo = ({ variant }) => (
   <img className={`nf-logo nf-logo--${variant}`} src={LOGO} alt="Girl Fight" />
 )
 
-/* ─── Screen 1: 404 intro ─────────────────────────────── */
-function Intro({ onPlay }) {
+/* ─── Screen 1: intro ─────────────────────────────────────
+   In 404 mode it shows the "page not found / go home" message next to
+   PLAY NOW. When reached via the "Fight Us" nav route (gameMode), it's
+   not an error page — drop the 404 text and just offer PLAY NOW. */
+function Intro({ onPlay, gameMode }) {
   return (
     <div className="nf-intro">
       <div className="nf-intro__logo">
@@ -47,12 +50,16 @@ function Intro({ onPlay }) {
         ))}
       </div>
 
-      <div className="nf-actions">
-        <div className="nf-actions__msg">
-          <div className="nf-actions__exist">404 Error: Page not found</div>
-          <div className="nf-actions__home">You could&nbsp;<Link to="/" className="nf-actions__link">go home</Link></div>
-        </div>
-        <div className="nf-actions__or">or</div>
+      <div className={`nf-actions${gameMode ? ' nf-actions--game' : ''}`}>
+        {!gameMode && (
+          <>
+            <div className="nf-actions__msg">
+              <div className="nf-actions__exist">404 Error: Page not found</div>
+              <div className="nf-actions__home">You could&nbsp;<Link to="/" className="nf-actions__link">go home</Link></div>
+            </div>
+            <div className="nf-actions__or">or</div>
+          </>
+        )}
         <button type="button" className="nf-play" onClick={onPlay}>play now</button>
       </div>
     </div>
@@ -131,7 +138,8 @@ function MuteButton() {
   )
 }
 
-export default function NotFound() {
+export default function NotFound({ mode = '404' }) {
+  const gameMode = mode === 'game'
   const [screen, setScreen] = useState('intro')
   const [p1, setP1] = useState(null)
   const [p2, setP2] = useState(null)
@@ -164,12 +172,12 @@ export default function NotFound() {
   useEffect(() => {
     document.body.classList.add('nf-lock')
     const prevTitle = document.title
-    document.title = '404'
+    document.title = gameMode ? 'Fight Us — Girl Fight' : '404'
     return () => {
       document.body.classList.remove('nf-lock')
       document.title = prevTitle
     }
-  }, [])
+  }, [gameMode])
 
   const play = () => {
     startMusic()   // first user gesture → audio allowed
@@ -190,12 +198,15 @@ export default function NotFound() {
       <HomeMarquee bg="#FFFB00" color="#000" />
       <div className={`nf-screen${screen === 'game' ? ' nf-screen--game' : ''}`} ref={screenRef}>
         <div className="nf-frame" style={{ transform: `scale(${scale})` }}>
-          {screen === 'intro' && <Intro onPlay={play} />}
+          {screen === 'intro' && <Intro onPlay={play} gameMode={gameMode} />}
           {screen === 'select' && <Select p1={p1} p2={p2} onPick={pick} onStart={() => { startSfx(); setScreen('game') }} />}
           {screen === 'game' && (
             <NotFoundGame player={CHARACTERS[p1]} opponents={buildLadder(p1, p2)} onExit={() => setScreen('select')} />
           )}
         </div>
+        {gameMode && (
+          <Link to="/" className="nf-back">← Back to Girl Fight Apparel</Link>
+        )}
         <MuteButton />
       </div>
       <HomeMarquee bg="#FFFB00" color="#000" />

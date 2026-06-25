@@ -44,6 +44,7 @@ export default function App() {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/account" element={<AccountPage />} />
             <Route path="/splash" element={<Splash />} />
+            <Route path="/fight" element={<NotFound mode="game" />} />
             <Route path="/404" element={<NotFound />} />
             <Route path="*" element={<Navigate to="/404" replace />} />
           </Routes>

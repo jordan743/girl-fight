@@ -45,6 +45,7 @@ export default function SiteNav({ theme = 'dark', overlay = false }) {
       <div className="gfnav__right">
         <Link to="/shop" className="gfnav__link">Shop All</Link>
         <Link to="/#about" className="gfnav__link">About</Link>
+        <Link to="/fight" className="gfnav__link">Fight Us</Link>
         <span className="gfnav__icons">
           <Link to="/account" className="gfnav__icon" aria-label="Account">
             <AccountGlyph />
@@ -89,6 +90,7 @@ export default function SiteNav({ theme = 'dark', overlay = false }) {
         <Link to="/" className="gfnav__menu-link" onClick={() => setMenuOpen(false)}>Home</Link>
         <Link to="/shop" className="gfnav__menu-link" onClick={() => setMenuOpen(false)}>Shop All</Link>
         <Link to="/#about" className="gfnav__menu-link" onClick={() => setMenuOpen(false)}>About</Link>
+        <Link to="/fight" className="gfnav__menu-link" onClick={() => setMenuOpen(false)}>Fight Us</Link>
         <Link to="/account" className="gfnav__menu-link" onClick={() => setMenuOpen(false)}>Account</Link>
         <button
           className="gfnav__menu-link gfnav__menu-cart"
