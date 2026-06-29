@@ -241,6 +241,9 @@ const STORY_TILES = {
   couchVsCart:     { type: 'video', src: SP + 'couch-vs-cart.mp4',    poster: SP + 'couch-vs-cart-poster.webp',    name: 'Couch_vs_Cart.mp4',   ar: '720 / 480' },
   fighters:        { type: 'video', src: SP + 'fighters.mp4',         poster: SP + 'fighters-poster.webp',         name: 'Fighters.mp4',        ar: '720 / 406' },
   dylanWrestling:  { type: 'video', src: SP + 'dylan-wrestling.mp4',  poster: SP + 'dylan-wrestling-poster.webp',  name: 'Dylan_Wrestling.mp4', ar: '720 / 406' },
+  newReel:         { type: 'video', src: SP + 'new-reel.mp4',         poster: SP + 'new-reel-poster.webp',         name: 'New_Reel.mp4',        ar: '854 / 480' },
+  newClip:         { type: 'video', src: SP + 'new-clip.mp4',         poster: SP + 'new-clip-poster.webp',         name: 'New_Clip.mp4',        ar: '480 / 854', silent: true },
+  dylanPhoto:      { src: SP + 'dylan-photo.webp',     name: 'Dylan_Photo.jpeg',      ar: '4 / 3' },
 }
 const T = STORY_TILES
 // One repeating "cell" of the scattered collage (positions/sizes from the
@@ -248,20 +251,35 @@ const T = STORY_TILES
 // can tile it infinitely yet the same asset is never on screen twice.
 const CELL_W = 1720
 const CELL_H = 940
+// Tiles are grouped into loosely-overlapping clusters with big black gaps
+// between them, so the section reads as scattered media floating in negative
+// space rather than a packed grid. Within a pair the later tile overlaps the
+// earlier one's corner.
 const CELL_LAYOUT = [
-  { t: T.helenMaroulis,   x: 599,  y: 28,  w: 338 },
-  { t: T.suckerPunch,     x: 147,  y: 194, w: 172 },
-  { t: T.chip,            x: 400,  y: 327, w: 197 },
-  { t: T.dylanAccountant, x: 39,   y: 410, w: 190 },
-  { t: T.helenJig,        x: 102,  y: 660, w: 338 },
-  { t: T.helenDylan,      x: 678,  y: 331, w: 338 },
-  { t: T.mels,            x: 696,  y: 774, w: 211 },
-  { t: T.lilDylan,        x: 1273, y: 8,   w: 255 },
-  { t: T.helenM,          x: 1181, y: 336, w: 281 },
-  { t: T.lowriders,       x: 1346, y: 570, w: 338 },
-  { t: T.couchVsCart,     x: 980,  y: 40,  w: 280 },
-  { t: T.fighters,        x: 980,  y: 650, w: 320 },
-  { t: T.dylanWrestling,  x: 450,  y: 720, w: 360 },
+  // Top-left pair
+  { t: T.helenMaroulis,   x: 60,   y: 60,  w: 300 },
+  { t: T.suckerPunch,     x: 320,  y: 150, w: 170 },
+  // Hero pair (center-top) — ★ prominent reel
+  { t: T.newReel,         x: 600,  y: 70,  w: 480 },
+  { t: T.lilDylan,        x: 1010, y: 250, w: 200 },
+  // Top-right pair
+  { t: T.couchVsCart,     x: 1330, y: 80,  w: 290 },
+  { t: T.helenM,          x: 1300, y: 240, w: 260 },
+  // Mid-left pair
+  { t: T.chip,            x: 90,   y: 360, w: 200 },
+  { t: T.dylanAccountant, x: 270,  y: 450, w: 250 },
+  // Center pair
+  { t: T.helenDylan,      x: 560,  y: 430, w: 320 },
+  { t: T.newClip,         x: 840,  y: 390, w: 200 },   // portrait, silent
+  // Mid-right pair
+  { t: T.dylanPhoto,      x: 1250, y: 480, w: 290 },
+  { t: T.lowriders,       x: 1180, y: 620, w: 280 },
+  // Bottom-left pair
+  { t: T.helenJig,        x: 150,  y: 740, w: 280 },
+  { t: T.dylanWrestling,  x: 400,  y: 700, w: 300 },
+  // Bottom-center pair
+  { t: T.mels,            x: 720,  y: 780, w: 210 },
+  { t: T.fighters,        x: 880,  y: 740, w: 290 },
 ]
 
 function StoryVideo({ tile }) {
@@ -289,12 +307,14 @@ function StoryVideo({ tile }) {
   return (
     <>
       <video ref={ref} src={tile.src} poster={tile.poster} muted loop playsInline preload="none" />
+      {tile.silent ? null : (
       <button type="button" className="hm-story__mute" onClick={toggle}
               aria-label={muted ? 'Unmute video' : 'Mute video'}>
         {muted
           ? <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zm2-7.3-1.3 1.3A8 8 0 0 1 18.5 12a8 8 0 0 1-1.3 6l1.3 1.3A10 10 0 0 0 20.5 12a10 10 0 0 0-2-7.3z"/><line x1="3" y1="3" x2="21" y2="21" stroke="currentColor" strokeWidth="2"/></svg>
           : <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zm2-7.3-1.3 1.3A8 8 0 0 1 18.5 12a8 8 0 0 1-1.3 6l1.3 1.3A10 10 0 0 0 20.5 12a10 10 0 0 0-2-7.3z"/></svg>}
       </button>
+      )}
     </>
   )
 }

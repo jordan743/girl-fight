@@ -52,58 +52,58 @@ const DESIGNS = [
   {
     id: 5,
     black: [
-      { color: 'yellow', hex: '#FFFB00', src: '/shirts/5-black/yellow.png' },
+      { color: 'yellow', hex: '#FFFB00', src: '/shirts/5-black/yellow.webp' },
     ],
     white: [
-      { color: 'black', hex: '#000000', src: '/shirts/5-white/black.png' },
+      { color: 'black', hex: '#000000', src: '/shirts/5-white/black.webp' },
     ],
   },
   {
     id: 1,
     black: [
-      { color: 'yellow', hex: '#FFFB00', src: '/shirts/1-black/yellow.png' },
-      { color: 'pink',   hex: '#FF85F1', src: '/shirts/1-black/pink.png'   },
-      { color: 'white',  hex: '#ffffff', src: '/shirts/1-black/white.png'  },
+      { color: 'yellow', hex: '#FFFB00', src: '/shirts/1-black/yellow.webp' },
+      { color: 'pink',   hex: '#FF85F1', src: '/shirts/1-black/pink.webp'   },
+      { color: 'white',  hex: '#ffffff', src: '/shirts/1-black/white.webp'  },
     ],
     white: [
-      { color: 'black', hex: '#000000', src: '/shirts/1-white/black.png' },
-      { color: 'pink',  hex: '#FF85F1', src: '/shirts/1-white/pink.png'  },
+      { color: 'black', hex: '#000000', src: '/shirts/1-white/black.webp' },
+      { color: 'pink',  hex: '#FF85F1', src: '/shirts/1-white/pink.webp'  },
     ],
   },
   {
     id: 2,
     black: [
-      { color: 'white',  hex: '#ffffff', src: '/shirts/2-black/white.png'  },
-      { color: 'yellow', hex: '#FFFB00', src: '/shirts/2-black/yellow.png' },
-      { color: 'pink',   hex: '#FF85F1', src: '/shirts/2-black/pink.png'   },
+      { color: 'white',  hex: '#ffffff', src: '/shirts/2-black/white.webp'  },
+      { color: 'yellow', hex: '#FFFB00', src: '/shirts/2-black/yellow.webp' },
+      { color: 'pink',   hex: '#FF85F1', src: '/shirts/2-black/pink.webp'   },
     ],
     white: [
-      { color: 'black', hex: '#000000', src: '/shirts/2-white/black.png' },
-      { color: 'pink',  hex: '#FF85F1', src: '/shirts/2-white/pink.png'  },
+      { color: 'black', hex: '#000000', src: '/shirts/2-white/black.webp' },
+      { color: 'pink',  hex: '#FF85F1', src: '/shirts/2-white/pink.webp'  },
     ],
   },
   {
     id: 3,
     black: [
-      { color: 'white',  hex: '#ffffff', src: '/shirts/3-black/white.png'  },
-      { color: 'yellow', hex: '#FFFB00', src: '/shirts/3-black/yellow.png' },
-      { color: 'pink',   hex: '#FF85F1', src: '/shirts/3-black/pink.png'   },
+      { color: 'white',  hex: '#ffffff', src: '/shirts/3-black/white.webp'  },
+      { color: 'yellow', hex: '#FFFB00', src: '/shirts/3-black/yellow.webp' },
+      { color: 'pink',   hex: '#FF85F1', src: '/shirts/3-black/pink.webp'   },
     ],
     white: [
-      { color: 'black', hex: '#000000', src: '/shirts/3-white/black.png' },
-      { color: 'pink',  hex: '#FF85F1', src: '/shirts/3-white/pink.png'  },
+      { color: 'black', hex: '#000000', src: '/shirts/3-white/black.webp' },
+      { color: 'pink',  hex: '#FF85F1', src: '/shirts/3-white/pink.webp'  },
     ],
   },
   {
     id: 4,
     black: [
-      { color: 'pink',   hex: '#FF85F1', src: '/shirts/4-black/pink.png'   },
-      { color: 'white',  hex: '#ffffff', src: '/shirts/4-black/white.png'  },
-      { color: 'yellow', hex: '#FFFB00', src: '/shirts/4-black/yellow.png' },
+      { color: 'pink',   hex: '#FF85F1', src: '/shirts/4-black/pink.webp'   },
+      { color: 'white',  hex: '#ffffff', src: '/shirts/4-black/white.webp'  },
+      { color: 'yellow', hex: '#FFFB00', src: '/shirts/4-black/yellow.webp' },
     ],
     white: [
-      { color: 'black', hex: '#000000', src: '/shirts/4-white/black.png' },
-      { color: 'pink',  hex: '#FF85F1', src: '/shirts/4-white/pink.png'  },
+      { color: 'black', hex: '#000000', src: '/shirts/4-white/black.webp' },
+      { color: 'pink',  hex: '#FF85F1', src: '/shirts/4-white/pink.webp'  },
     ],
   },
 ]

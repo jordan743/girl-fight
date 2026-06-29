@@ -204,7 +204,7 @@ export default function NotFound({ mode = '404' }) {
             <NotFoundGame player={CHARACTERS[p1]} opponents={buildLadder(p1, p2)} onExit={() => setScreen('select')} />
           )}
         </div>
-        {gameMode && (
+        {gameMode && screen !== 'game' && (
           <Link to="/" className="nf-back">← Back to Girl Fight Apparel</Link>
         )}
         <MuteButton />

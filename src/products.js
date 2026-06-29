@@ -1,7 +1,7 @@
 // Shared product catalog — used by Home (first 3), Shop All (all) and Product pages.
 // Order: Lil Helen Tee (the named outlier) first, then GF_LTee_001–004 in sequence.
 // Home shows the first 3 (Lil Helen + 001 + 002); Shop/product pages show all in order.
-// Colorways reuse the splash mockups in /public/shirts/{design}-{black|white}/{ink}.png
+// Colorways reuse the splash mockups in /public/shirts/{design}-{black|white}/{ink}.webp
 // `bg` is the per-product background photo shown behind the tee on cards + the hero.
 export const PRODUCTS = [
   {
@@ -17,10 +17,10 @@ export const PRODUCTS = [
     flatVariants: true,
     variants: {
       black: [
-        { color: 'yellow', hex: '#FFFB00', src: '/shirts/5-black/yellow.png' },
+        { color: 'yellow', hex: '#FFFB00', src: '/shirts/5-black/yellow.webp' },
       ],
       white: [
-        { color: 'black', hex: '#000000', src: '/shirts/5-white/black.png' },
+        { color: 'black', hex: '#000000', src: '/shirts/5-white/black.webp' },
       ],
     },
   },
@@ -34,13 +34,13 @@ export const PRODUCTS = [
     desc: 'Crafted in heavyweight cotton with a structured, boxy fit. The premium tee features the GIRL/FIGHT block logo.',
     variants: {
       black: [
-        { color: 'yellow', hex: '#FFFB00', src: '/shirts/1-black/yellow.png' },
-        { color: 'pink', hex: '#FF85F1', src: '/shirts/1-black/pink.png' },
-        { color: 'white', hex: '#ffffff', src: '/shirts/1-black/white.png' },
+        { color: 'yellow', hex: '#FFFB00', src: '/shirts/1-black/yellow.webp' },
+        { color: 'pink', hex: '#FF85F1', src: '/shirts/1-black/pink.webp' },
+        { color: 'white', hex: '#ffffff', src: '/shirts/1-black/white.webp' },
       ],
       white: [
-        { color: 'black', hex: '#000000', src: '/shirts/1-white/black.png' },
-        { color: 'pink', hex: '#FF85F1', src: '/shirts/1-white/pink.png' },
+        { color: 'black', hex: '#000000', src: '/shirts/1-white/black.webp' },
+        { color: 'pink', hex: '#FF85F1', src: '/shirts/1-white/pink.webp' },
       ],
     },
   },
@@ -72,13 +72,13 @@ export const PRODUCTS = [
     desc: 'Crafted in heavyweight cotton with a structured, boxy fit. The premium tee features a wildstyle Girl Fight graffiti graphic.',
     variants: {
       black: [
-        { color: 'pink', hex: '#FF85F1', src: '/shirts/4-black/pink.png' },
-        { color: 'white', hex: '#ffffff', src: '/shirts/4-black/white.png' },
-        { color: 'yellow', hex: '#FFFB00', src: '/shirts/4-black/yellow.png' },
+        { color: 'pink', hex: '#FF85F1', src: '/shirts/4-black/pink.webp' },
+        { color: 'white', hex: '#ffffff', src: '/shirts/4-black/white.webp' },
+        { color: 'yellow', hex: '#FFFB00', src: '/shirts/4-black/yellow.webp' },
       ],
       white: [
-        { color: 'black', hex: '#000000', src: '/shirts/4-white/black.png' },
-        { color: 'pink', hex: '#FF85F1', src: '/shirts/4-white/pink.png' },
+        { color: 'black', hex: '#000000', src: '/shirts/4-white/black.webp' },
+        { color: 'pink', hex: '#FF85F1', src: '/shirts/4-white/pink.webp' },
       ],
     },
   },
@@ -92,13 +92,13 @@ export const PRODUCTS = [
     desc: 'Crafted in heavyweight cotton with a structured, boxy fit. The premium tee features the Girl Fight script wordmark in a clean finish.',
     variants: {
       black: [
-        { color: 'white', hex: '#ffffff', src: '/shirts/2-black/white.png' },
-        { color: 'yellow', hex: '#FFFB00', src: '/shirts/2-black/yellow.png' },
-        { color: 'pink', hex: '#FF85F1', src: '/shirts/2-black/pink.png' },
+        { color: 'white', hex: '#ffffff', src: '/shirts/2-black/white.webp' },
+        { color: 'yellow', hex: '#FFFB00', src: '/shirts/2-black/yellow.webp' },
+        { color: 'pink', hex: '#FF85F1', src: '/shirts/2-black/pink.webp' },
       ],
       white: [
-        { color: 'black', hex: '#000000', src: '/shirts/2-white/black.png' },
-        { color: 'pink', hex: '#FF85F1', src: '/shirts/2-white/pink.png' },
+        { color: 'black', hex: '#000000', src: '/shirts/2-white/black.webp' },
+        { color: 'pink', hex: '#FF85F1', src: '/shirts/2-white/pink.webp' },
       ],
     },
   },
