@@ -1,29 +1,83 @@
-// Shared product catalog — used by Home (first 3), Shop All (all) and Product pages.
-// Order: Lil Helen Tee (the named outlier) first, then GF_LTee_001–004 in sequence.
-// Home shows the first 3 (Lil Helen + 001 + 002); Shop/product pages show all in order.
-// Colorways reuse the splash mockups in /public/shirts/{design}-{black|white}/{ink}.webp
-// `bg` is the per-product background photo shown behind the tee on cards + the hero.
-export const PRODUCTS = [
+// Shared product catalog — used by Home, Shop All and the product page.
+//
+// LAUNCH LINE-UP: one tee (Lil Helen) in three garment colors. Each colorway is
+// its own card in the grids, and every card deep-links to the SAME product page
+// with that color preselected (`/product/fighter?color=grey`).
+//
+// The pre-launch multi-design catalog is preserved in ARCHIVED_PRODUCTS at the
+// bottom of this file — drop those entries back into PRODUCTS to relaunch them.
+
+// Each colorway reveals its own lifestyle shot on hover, cropped so the tee
+// graphic and Helen's face sit in the card's focal area.
+
+// Order matches the Figma product grid: grey → black → white.
+export const COLORS = [
   {
-    id: 'fighter',
-    design: 5,
-    img: '/shop/tee-fighter.webp',
-    hoverImg: '/shop/tee-fighter-hover.webp',
-    bg: '/shop/bg-fighter.webp',
-    name: 'Lil Helen Tee',
-    price: '$55',
-    desc: 'Crafted in heavyweight cotton with a structured, boxy fit. The premium tee features the bold yellow Girl Fight wordmark paired with our fighter graphic.',
-    // Only two colorways (one per base) — show both as flat swatches, no ⇄ toggle.
-    flatVariants: true,
-    variants: {
-      black: [
-        { color: 'yellow', hex: '#FFFB00', src: '/shirts/5-black/yellow.webp' },
-      ],
-      white: [
-        { color: 'black', hex: '#000000', src: '/shirts/5-white/black.webp' },
-      ],
-    },
+    key: 'grey',
+    name: 'Grey',
+    hex: '#555957',   // garment
+    ink: '#FFFB00',   // print
+    img: '/shop/lil-helen-grey.webp',
+    zoom: '/shop/lil-helen-grey-lg.webp',
+    bg: '/shop/bg-lil-helen-grey.webp',
+    hover: '/shop/hover-lil-helen-grey.webp',
   },
+  {
+    key: 'black',
+    name: 'Black',
+    hex: '#1F2120',
+    ink: '#FFFB00',
+    img: '/shop/lil-helen-black.webp',
+    zoom: '/shop/lil-helen-black-lg.webp',
+    bg: '/shop/bg-lil-helen-black.webp',
+    hover: '/shop/tee-fighter-hover.webp',
+  },
+  {
+    key: 'white',
+    name: 'White',
+    hex: '#F1F5F8',
+    ink: '#000000',
+    img: '/shop/lil-helen-white.webp',
+    zoom: '/shop/lil-helen-white-lg.webp',
+    bg: '/shop/bg-lil-helen-white.webp',
+    hover: '/shop/hover-lil-helen-white.webp',
+  },
+]
+
+// Color the product page opens on when the URL carries no `?color=`.
+export const DEFAULT_COLOR = 'black'
+
+export const getColor = (key) =>
+  COLORS.find((c) => c.key === key) || COLORS.find((c) => c.key === DEFAULT_COLOR)
+
+export const PRODUCT = {
+  id: 'fighter',
+  design: 5,
+  name: 'Lil Helen Tee',
+  price: '$55',
+  desc: 'Crafted in heavyweight cotton with a structured, boxy fit. The premium tee features the bold Girl Fight wordmark paired with our fighter graphic.',
+  colors: COLORS,
+}
+
+// Grid cards — one per colorway, all pointing at the same product page.
+export const PRODUCTS = COLORS.map((c) => ({
+  ...PRODUCT,
+  cardId: `${PRODUCT.id}-${c.key}`,
+  colorKey: c.key,
+  colorName: c.name,
+  href: `/product/${PRODUCT.id}?color=${c.key}`,
+  img: c.img,
+  bg: c.bg,
+  hoverImg: c.hover,
+}))
+
+export const getProduct = (id) => (id === PRODUCT.id ? PRODUCT : null)
+
+export const SIZES = ['S', 'M', 'L', 'XL']
+
+// ─── Shelved until after launch ──────────────────────────────────────────────
+// GF_LTee_001–004. Assets still live in /public/shirts + /public/shop.
+export const ARCHIVED_PRODUCTS = [
   {
     id: 'block',
     design: 1,
@@ -103,7 +157,3 @@ export const PRODUCTS = [
     },
   },
 ]
-
-export const getProduct = (id) => PRODUCTS.find((p) => p.id === id)
-
-export const SIZES = ['S', 'M', 'L', 'XL']

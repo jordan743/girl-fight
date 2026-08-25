@@ -179,18 +179,18 @@ function Section1() {
 
       <div className="hm-s1__products">
         {PRODUCTS.map(p => (
-          <Link to={`/product/${p.id}`} key={p.id} className="hm-product-card">
+          <Link to={p.href} key={p.cardId} className="hm-product-card">
             <div className="hm-product-card__img">
               <div className="hm-product-card__bg" aria-hidden="true">
                 <img src={p.bg} alt="" />
               </div>
-              <img src={p.img} alt={p.name} className="hm-product-card__shirt" />
+              <img src={p.img} alt={`${p.name} — ${p.colorName}`} className="hm-product-card__shirt" />
               {p.hoverImg && (
                 <img src={p.hoverImg} alt="" aria-hidden="true" className="hm-product-card__hover" />
               )}
             </div>
             <div className="hm-product-card__meta">
-              <span className="hm-product-card__name">{p.name}</span>
+              <span className="hm-product-card__name">{p.name} &mdash; {p.colorName}</span>
               <span className="hm-product-card__price">{p.price}</span>
             </div>
           </Link>
@@ -255,54 +255,112 @@ const CELL_H = 940
 // between them, so the section reads as scattered media floating in negative
 // space rather than a packed grid. Within a pair the later tile overlaps the
 // earlier one's corner.
+// Sizes are ~78% of the original comp and each pair is pulled in toward its own
+// centre by the same factor — the clusters keep their composition while the
+// black gaps between them open up. Encoded assets are 2x these widths.
 const CELL_LAYOUT = [
   // Top-left pair
-  { t: T.helenMaroulis,   x: 60,   y: 60,  w: 300 },
-  { t: T.suckerPunch,     x: 320,  y: 150, w: 170 },
+  { t: T.helenMaroulis,   x: 107,  y: 89,  w: 234 },
+  { t: T.suckerPunch,     x: 310,  y: 159, w: 133 },
   // Hero pair (center-top) — ★ prominent reel
-  { t: T.newReel,         x: 600,  y: 70,  w: 480 },
-  { t: T.lilDylan,        x: 1010, y: 250, w: 200 },
+  { t: T.newReel,         x: 638,  y: 96,  w: 432 },
+  { t: T.lilDylan,        x: 987,  y: 252, w: 156 },
   // Top-right pair
-  { t: T.couchVsCart,     x: 1330, y: 80,  w: 290 },
-  { t: T.helenM,          x: 1300, y: 240, w: 260 },
+  { t: T.couchVsCart,     x: 1359, y: 117, w: 226 },
+  { t: T.helenM,          x: 1335, y: 241, w: 203 },
   // Mid-left pair
-  { t: T.chip,            x: 90,   y: 360, w: 200 },
-  { t: T.dylanAccountant, x: 270,  y: 450, w: 250 },
+  { t: T.chip,            x: 137,  y: 399, w: 156 },
+  { t: T.dylanAccountant, x: 278,  y: 470, w: 195 },
   // Center pair
-  { t: T.helenDylan,      x: 560,  y: 430, w: 320 },
-  { t: T.newClip,         x: 840,  y: 390, w: 200 },   // portrait, silent
+  { t: T.helenDylan,      x: 613,  y: 460, w: 250 },
+  { t: T.newClip,         x: 831,  y: 429, w: 156 },   // portrait, silent
   // Mid-right pair
-  { t: T.dylanPhoto,      x: 1250, y: 480, w: 290 },
-  { t: T.lowriders,       x: 1180, y: 620, w: 280 },
+  { t: T.dylanPhoto,      x: 1274, y: 513, w: 226 },
+  { t: T.lowriders,       x: 1220, y: 622, w: 218 },
   // Bottom-left pair
-  { t: T.helenJig,        x: 150,  y: 740, w: 280 },
-  { t: T.dylanWrestling,  x: 400,  y: 700, w: 300 },
+  { t: T.helenJig,        x: 211,  y: 753, w: 218 },
+  { t: T.dylanWrestling,  x: 406,  y: 722, w: 234 },
   // Bottom-center pair
-  { t: T.mels,            x: 720,  y: 780, w: 210 },
-  { t: T.fighters,        x: 880,  y: 740, w: 290 },
+  { t: T.mels,            x: 769,  y: 791, w: 164 },
+  { t: T.fighters,        x: 894,  y: 760, w: 226 },
 ]
+
+// Every on-screen clip plays — a tile sitting frozen next to moving ones reads
+// as broken. What is skipped is redundant decoding: the canvas tiles the same
+// cell (and so the same <video>) several times over, so a clip gets exactly one
+// player, the most-visible copy. That costs nothing visually, because the cell
+// is deliberately larger than any viewport — two copies of one tile can never
+// be on screen at the same time.
+const players = new Map() // <video> -> { src, ratio, play, pause }
+let scheduled = false
+
+function scheduleVideos() {
+  if (scheduled) return
+  scheduled = true
+  requestAnimationFrame(() => {
+    scheduled = false
+    // The most-visible copy of each distinct clip is the one that plays.
+    const bestPerClip = new Map()
+    for (const [el, e] of players) {
+      if (e.ratio <= 0) continue
+      const held = bestPerClip.get(e.src)
+      if (!held || e.ratio > players.get(held).ratio) bestPerClip.set(e.src, el)
+    }
+    const winners = new Set(bestPerClip.values())
+    for (const [el, e] of players) (winners.has(el) ? e.play : e.pause)()
+  })
+}
 
 function StoryVideo({ tile }) {
   const ref = useRef(null)
   const [muted, setMuted] = useState(true)
-  // Only play copies that are actually on screen (the canvas tiles many copies)
   useEffect(() => {
     const v = ref.current
     if (!v) return
     v.muted = true // React's `muted` attribute is unreliable — force it so it loads silent
-    const io = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) v.play().catch(() => {})
-      else v.pause()
-    }, { threshold: 0.15 })
+    const entry = {
+      src: tile.src,
+      ratio: 0,
+      play: () => {
+        if (!v.paused) return
+        v.preload = 'auto' // don't fetch the file until this copy actually runs
+        v.play().catch(() => {})
+      },
+      pause: () => {
+        const offScreen = entry.ratio <= 0
+        // Audio the user turned on keeps running — but only while the tile is
+        // still on screen.
+        if (!v.muted && !offScreen) return
+        if (!v.paused) v.pause()
+        // Off screen it always goes back to muted, so a tile can't come back
+        // blaring when it scrolls into view again. Checked even when already
+        // paused: an unmuted clip that autoplay blocked is still flagged live.
+        if (!v.muted && offScreen) { v.muted = true; setMuted(true) }
+      },
+    }
+    players.set(v, entry)
+    const io = new IntersectionObserver(([e]) => {
+      entry.ratio = e.isIntersecting ? e.intersectionRatio : 0
+      scheduleVideos()
+    }, { threshold: [0, 0.2, 0.4, 0.6, 0.8, 1] })
     io.observe(v)
-    return () => io.disconnect()
-  }, [])
+    return () => { io.disconnect(); players.delete(v); scheduleVideos() }
+  }, [tile.src])
+
   const toggle = (e) => {
     e.preventDefault(); e.stopPropagation()
     const v = ref.current; if (!v) return
     v.muted = !v.muted
     setMuted(v.muted)
-    if (!v.muted) v.play().catch(() => {})
+    if (!v.muted) {
+      // Unmuting is an explicit request for this copy — give it the budget.
+      const mine = players.get(v)
+      for (const [el, en] of players) {
+        if (el !== v && en.src === mine.src) en.pause()
+      }
+      v.preload = 'auto'
+      v.play().catch(() => {})
+    }
   }
   return (
     <>
@@ -326,7 +384,7 @@ function StoryTile({ tile }) {
       <div className="hm-story__media" style={{ aspectRatio: tile.ar }}>
         {isVideo
           ? <StoryVideo tile={tile} />
-          : <img src={tile.src} alt="" />}
+          : <img src={tile.src} alt="" loading="lazy" decoding="async" />}
       </div>
     </figure>
   )
@@ -360,7 +418,9 @@ function AboutSection() {
     const vp = viewportRef.current
     const world = worldRef.current
     if (!vp || !world) return
-    const s = { x: -120, y: -80, vx: 0, vy: 0, dragging: false, tile: null, lastX: 0, lastY: 0, moved: false, raf: 0 }
+    const s = { x: -120, y: -80, vx: 0, vy: 0, dragging: false, tile: null,
+                lastX: 0, lastY: 0, moved: false, raf: 0,
+                visible: false, appliedX: NaN, appliedY: NaN }
 
     const computeGrid = () => setGrid({
       cols: Math.ceil(vp.clientWidth / CELL_W) + 1,
@@ -373,7 +433,11 @@ function AboutSection() {
       const wrapX = (((s.x % CELL_W) + CELL_W) % CELL_W) - CELL_W
       const wrapY = (((s.y % CELL_H) + CELL_H) % CELL_H) - CELL_H
       world.style.transform = `translate3d(${wrapX}px, ${wrapY}px, 0)`
+      s.appliedX = s.x; s.appliedY = s.y
     }
+    // The loop only runs while the section is on screen, and only touches the
+    // DOM on frames where the canvas actually moved — otherwise it was forcing
+    // a style recalc every frame for the whole life of the page.
     const tick = () => {
       if (!s.dragging) {
         s.x += s.vx; s.y += s.vy
@@ -381,10 +445,15 @@ function AboutSection() {
         if (Math.abs(s.vx) < 0.04) s.vx = 0
         if (Math.abs(s.vy) < 0.04) s.vy = 0
       }
-      apply()
+      if (s.x !== s.appliedX || s.y !== s.appliedY) apply()
+      if (!s.visible && !s.dragging && !s.tile && s.vx === 0 && s.vy === 0) { s.raf = 0; return }
       s.raf = requestAnimationFrame(tick)
     }
-    s.raf = requestAnimationFrame(tick)
+    const wake = () => { if (!s.raf) s.raf = requestAnimationFrame(tick) }
+    apply()
+    const vis = new IntersectionObserver(([e]) => { s.visible = e.isIntersecting; wake() },
+                                         { rootMargin: '200px' })
+    vis.observe(vp)
 
     // No pointer capture: capturing would retarget the click to the viewport
     // and the video unmute button would never fire. Track move/up on window
@@ -415,6 +484,7 @@ function AboutSection() {
         s.dragging = true
       }
       vp.classList.add('is-grabbing')
+      wake()
     }
     const onMove = (e) => {
       const dx = e.clientX - s.lastX, dy = e.clientY - s.lastY
@@ -423,6 +493,7 @@ function AboutSection() {
         const p = positionsRef.current[s.tile.idx]
         p.x += dx; p.y += dy
         s.tile.els.forEach((el) => { el.style.left = p.x + 'px'; el.style.top = p.y + 'px' })
+        wake()
         s.lastX = e.clientX; s.lastY = e.clientY
         return
       }
@@ -430,6 +501,7 @@ function AboutSection() {
       if (Math.abs(dx) + Math.abs(dy) > 3) s.moved = true
       s.x += dx; s.y += dy; s.vx = dx; s.vy = dy
       s.lastX = e.clientX; s.lastY = e.clientY
+      wake()
     }
     const onUp = () => {
       if (s.tile) {
@@ -450,6 +522,7 @@ function AboutSection() {
 
     return () => {
       cancelAnimationFrame(s.raf)
+      vis.disconnect()
       window.removeEventListener('resize', computeGrid)
       vp.removeEventListener('pointerdown', onDown)
       window.removeEventListener('pointermove', onMove)

@@ -101,9 +101,19 @@ export function startMusic() {
   timer = setInterval(scheduler, 25)
 }
 
+// Called when the game page unmounts. Notes are scheduled up to ~120ms ahead of
+// the clock, so clearing the interval alone leaves a tail playing — and the
+// AudioContext itself would keep running for the rest of the session. Closing
+// it stops everything at once; `ensure()` lazily rebuilds on the next visit,
+// and `muted` is module state so the user's sound choice carries over.
 export function stopMusic() {
   playing = false
+  step = 0
   if (timer) { clearInterval(timer); timer = null }
+  if (!ctx) return
+  const dying = ctx
+  ctx = master = musicGain = noiseBuf = null
+  try { dying.close() } catch { /* already closed */ }
 }
 
 // SFX -------------------------------------------------------------

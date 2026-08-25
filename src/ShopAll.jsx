@@ -55,16 +55,16 @@ export default function ShopAll() {
       {/* Product grid */}
       <section className="sa-grid" aria-label="All products">
         {PRODUCTS.map((p) => (
-          <Link to={`/product/${p.id}`} key={p.id} className="sa-card">
+          <Link to={p.href} key={p.cardId} className="sa-card">
             <div className="sa-card__img">
               <img src={p.bg} alt="" className="sa-card__bg" aria-hidden="true" />
-              <img src={p.img} alt={p.name} className="sa-card__shirt" />
+              <img src={p.img} alt={`${p.name} — ${p.colorName}`} className="sa-card__shirt" />
               {p.hoverImg && (
                 <img src={p.hoverImg} alt="" aria-hidden="true" className="sa-card__hover" />
               )}
             </div>
             <div className="sa-card__meta">
-              <span className="sa-card__name">{p.name}</span>
+              <span className="sa-card__name">{p.name} &mdash; {p.colorName}</span>
               <span className="sa-card__price">{p.price}</span>
             </div>
           </Link>

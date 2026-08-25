@@ -1436,7 +1436,9 @@
 
   /* Product cards — stack to a single column */
   .hm-s1__products { flex-direction: column; gap: 12px; padding: 20px 20px 0; }
-  .hm-product-card__img { height: 70vw; min-height: 340px; }
+  /* min-height was beating the 70vw, landing these at ~1:1 — match the 4:5
+     the Shop All cards use at this width. */
+  .hm-product-card__img { height: auto; min-height: 0; aspect-ratio: 4 / 5; }
   /* name + price always visible on mobile (no hover) */
   .hm-product-card__meta { opacity: 1; }
 

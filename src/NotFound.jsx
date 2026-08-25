@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { HomeMarquee } from './Home'
-import { startMusic, blip, selectSfx, startSfx, setMuted, getMuted } from './nfAudio'
+import { startMusic, stopMusic, blip, selectSfx, startSfx, setMuted, getMuted } from './nfAudio'
 import NotFoundGame from './NotFoundGame'
 import './NotFound.css'
 
@@ -168,6 +168,10 @@ export default function NotFound({ mode = '404' }) {
     window.addEventListener('resize', fit)
     return () => window.removeEventListener('resize', fit)
   }, [screen])
+
+  // Kill the chiptune when the page goes away — otherwise it keeps playing over
+  // the apparel pages for the rest of the session.
+  useEffect(() => stopMusic, [])
 
   useEffect(() => {
     document.body.classList.add('nf-lock')

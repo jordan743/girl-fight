@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { HomeMarquee, HomeFooter } from './Home'
 import { useCart } from './CartContext'
-import { PRODUCTS, getProduct, SIZES } from './products'
+import { PRODUCT, getProduct, getColor, SIZES } from './products'
 import SiteNav from './SiteNav'
 import './Home.css'
 import './ShopAll.css'
@@ -12,6 +12,21 @@ function CartIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" width="24" height="24">
       <path d="M17 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7.16 14h9.69c.75 0 1.41-.41 1.75-1.03l3.24-5.88A1 1 0 0 0 21 5.66H5.21l-.94-2H1v2h2l3.6 7.59-1.35 2.44C3.52 18.37 4.48 20 6 20h12v-2H6l1.16-2z" />
+    </svg>
+  )
+}
+
+// Must match `.pp-hero__shirt.is-zoom` in ProductPage.css.
+const ZOOM_SCALE = 2.4
+
+function MagnifyIcon({ out }) {
+  return (
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+         strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+      <circle cx="10.5" cy="10.5" r="6.5" />
+      <path d="M15.5 15.5 L21 21" />
+      <path d="M7.5 10.5h6" />
+      {!out && <path d="M10.5 7.5v6" />}
     </svg>
   )
 }
@@ -35,56 +50,56 @@ function Accordion({ title, children }) {
 
 export default function ProductPage() {
   const { id } = useParams()
-  const product = getProduct(id) || PRODUCTS[0]
+  const product = getProduct(id) || PRODUCT
   const { open, count, addItem } = useCart()
 
   const [size, setSize] = useState('XL')
   const [qty, setQty] = useState(1)
 
-  // Colorway selection (mirrors the splash gallery model)
-  const [isWhite, setIsWhite] = useState(false)
-  const [colorIdx, setColorIdx] = useState(0)
-  const variants = (isWhite ? product.variants.white : product.variants.black) || []
-  const safeIdx = Math.min(colorIdx, variants.length - 1)
-  const current = variants[safeIdx] || { src: product.img, color: '' }
-  const shirtBg = isWhite ? '#ffffff' : '#000000'
-  const hasWhite = (product.variants.white || []).length > 0
-  const hasColors = variants.length > 1 || hasWhite
+  // Colorway lives in the URL (`?color=grey`) so the grid cards can deep-link
+  // straight to the shade that was clicked, and reloads/back keep it.
+  const [searchParams, setSearchParams] = useSearchParams()
+  const color = getColor(searchParams.get('color'))
+  const selectColor = (key) => setSearchParams({ color: key }, { replace: true })
 
-  // Flat colorway list (all bases shown together, no reverse toggle)
-  const flatVariants = product.flatVariants
-    ? [
-        ...(product.variants.black || []).map((v, idx) => ({ ...v, isWhite: false, idx })),
-        ...(product.variants.white || []).map((v, idx) => ({ ...v, isWhite: true, idx })),
-      ]
-    : null
-
-  // Hover-to-magnify on the product image
+  // Click-to-magnify on the product image. Off by default; the button in the
+  // corner of the media panel turns it on, then the pointer pans the zoom.
   const shirtRef = useRef(null)
   const [zoom, setZoom] = useState({ active: false, x: 50, y: 50 })
   const handleZoomMove = (e) => {
+    if (!zoom.active) return
     const el = shirtRef.current
     if (!el) return
+    // getBoundingClientRect() reports the SCALED box, so it has to be inverted
+    // back to the layout box before the cursor can be turned into an origin.
+    // A scale of s about origin fraction f moves the left edge by f·W·(1−s) —
+    // the box grows away from the origin, not evenly on both sides. Assuming
+    // it grew evenly is only correct at dead centre, and everywhere else the
+    // error fed back into the next move, so the zoom tracked a point offset
+    // from the cursor.
+    const s = ZOOM_SCALE
     const r = el.getBoundingClientRect()
-    const x = Math.max(0, Math.min(100, ((e.clientX - r.left) / r.width) * 100))
-    const y = Math.max(0, Math.min(100, ((e.clientY - r.top) / r.height) * 100))
+    const w = r.width / s
+    const h = r.height / s
+    const left = r.left + (zoom.x / 100) * w * (s - 1)
+    const top = r.top + (zoom.y / 100) * h * (s - 1)
+    const x = Math.max(0, Math.min(100, ((e.clientX - left) / w) * 100))
+    const y = Math.max(0, Math.min(100, ((e.clientY - top) / h) * 100))
     setZoom({ active: true, x, y })
   }
+  const toggleZoom = () => setZoom((z) => ({ active: !z.active, x: 50, y: 50 }))
 
   useEffect(() => {
     document.body.style.background = '#fff'
     window.scrollTo(0, 0)
     setQty(1)
     setSize('XL')
-    setIsWhite(false)
-    setColorIdx(0)
+    setZoom({ active: false, x: 50, y: 50 })
     return () => { document.body.style.background = '' }
   }, [id])
 
-  const more = PRODUCTS.filter((p) => p.id !== product.id)
-
   const handleAdd = () => {
-    addItem(product, { size, color: current.color, img: current.src, qty })
+    addItem(product, { size, color: color.name, img: color.img, qty })
     open()
   }
 
@@ -95,17 +110,25 @@ export default function ProductPage() {
       {/* Product hero */}
       <section className="pp-hero">
         <div className="pp-hero__media">
-          <img src={product.bg} alt="" className="pp-hero__bg" aria-hidden="true" />
+          <img src={color.bg} alt="" className="pp-hero__bg" aria-hidden="true" />
           <img
             ref={shirtRef}
-            src={current.src}
-            alt={product.name}
+            src={color.zoom}
+            alt={`${product.name} — ${color.name}`}
             className={`pp-hero__shirt${zoom.active ? ' is-zoom' : ''}`}
             style={zoom.active ? { transformOrigin: `${zoom.x}% ${zoom.y}%` } : undefined}
-            onMouseEnter={() => setZoom((z) => ({ ...z, active: true }))}
-            onMouseLeave={() => setZoom({ active: false, x: 50, y: 50 })}
-            onMouseMove={handleZoomMove}
+            onPointerMove={handleZoomMove}
+            onClick={zoom.active ? toggleZoom : undefined}
           />
+          <button
+            type="button"
+            className={`pp-zoom-btn${zoom.active ? ' is-active' : ''}`}
+            onClick={toggleZoom}
+            aria-pressed={zoom.active}
+            aria-label={zoom.active ? 'Exit magnified view' : 'Magnify product image'}
+          >
+            <MagnifyIcon out={zoom.active} />
+          </button>
         </div>
 
         <div className="pp-hero__info">
@@ -121,48 +144,21 @@ export default function ProductPage() {
               <p className="pp-desc">{product.desc}</p>
             </div>
 
-            {hasColors && (
-              <div className="pp-opt">
-                <span className="pp-opt__label">Color</span>
-                <div className="pp-colors">
-                  {flatVariants ? (
-                    flatVariants.map((v) => {
-                      const active = v.isWhite === isWhite && v.idx === safeIdx
-                      return (
-                        <button
-                          key={`${v.isWhite ? 'w' : 'b'}-${v.color}`}
-                          className={`pp-swatch${active ? ' is-active' : ''}`}
-                          style={{ background: `linear-gradient(135deg, ${v.hex} 50%, ${v.isWhite ? '#ffffff' : '#000000'} 50%)` }}
-                          onClick={() => { setIsWhite(v.isWhite); setColorIdx(v.idx) }}
-                          aria-label={`${v.color} on ${v.isWhite ? 'white' : 'black'} tee`}
-                          aria-pressed={active}
-                        />
-                      )
-                    })
-                  ) : (
-                    <>
-                      {variants.map((v, i) => (
-                        <button
-                          key={v.color}
-                          className={`pp-swatch${i === safeIdx ? ' is-active' : ''}`}
-                          style={{ background: `linear-gradient(135deg, ${v.hex} 50%, ${shirtBg} 50%)` }}
-                          onClick={() => setColorIdx(i)}
-                          aria-label={`${v.color} on ${isWhite ? 'white' : 'black'} tee`}
-                          aria-pressed={i === safeIdx}
-                        />
-                      ))}
-                      {hasWhite && (
-                        <button
-                          className="pp-swatch-toggle"
-                          onClick={() => { setIsWhite((w) => !w); setColorIdx(0) }}
-                          aria-label="Toggle shirt base color"
-                        >⇄</button>
-                      )}
-                    </>
-                  )}
-                </div>
+            <div className="pp-opt">
+              <span className="pp-opt__label">Color</span>
+              <div className="pp-colors">
+                {product.colors.map((c) => (
+                  <button
+                    key={c.key}
+                    className={`pp-swatch${c.key === color.key ? ' is-active' : ''}`}
+                    style={{ background: `linear-gradient(135deg, ${c.ink} 50%, ${c.hex} 50%)` }}
+                    onClick={() => selectColor(c.key)}
+                    aria-label={`${c.name} tee`}
+                    aria-pressed={c.key === color.key}
+                  />
+                ))}
               </div>
-            )}
+            </div>
 
             <div className="pp-options">
               <div className="pp-opt">
@@ -209,27 +205,9 @@ export default function ProductPage() {
         </div>
       </section>
 
-      {/* More apparel */}
-      <section className="pp-more" aria-label="More apparel">
-        <div className="pp-more__label"><span>More<br />apparel</span></div>
-        <div className="pp-more__track">
-          {more.map((p) => (
-            <Link to={`/product/${p.id}`} key={p.id} className="sa-card pp-more__card">
-              <div className="sa-card__img">
-                <img src={p.bg} alt="" className="sa-card__bg" aria-hidden="true" />
-                <img src={p.img} alt={p.name} className="sa-card__shirt" />
-                {p.hoverImg && (
-                  <img src={p.hoverImg} alt="" aria-hidden="true" className="sa-card__hover" />
-                )}
-              </div>
-              <div className="sa-card__meta">
-                <span className="sa-card__name">{p.name}</span>
-                <span className="sa-card__price">{p.price}</span>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
+      {/* The "More colors" rail is parked until the catalog grows past this one
+          tee — with a single garment it only ever showed the same shirt back.
+          Markup is in git (and .pp-more styles are still in ProductPage.css). */}
 
       <HomeMarquee bg="#000" color="#fff" />
       <HomeFooter />

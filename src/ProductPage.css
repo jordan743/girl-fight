@@ -86,15 +86,41 @@
   max-width: 92%;
   max-height: 100%;
   object-fit: contain;
-  cursor: zoom-in;
   transition: transform 0.2s ease;
   will-change: transform;
 }
 
+/* Magnified view — opt-in via .pp-zoom-btn, then the pointer pans it. */
 .pp-hero__shirt.is-zoom {
   transform: scale(2.4);
   cursor: zoom-out;
   transition: transform 0.12s ease;
+  touch-action: none;
+}
+
+/* Magnify toggle, bottom-right of the media panel */
+.pp-zoom-btn {
+  position: absolute;
+  z-index: 2;
+  right: 16px;
+  bottom: 16px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid var(--black);
+  background: #fff;
+  color: var(--black);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.pp-zoom-btn:hover,
+.pp-zoom-btn.is-active {
+  background: var(--black);
+  color: #fff;
 }
 
 /* Info column */
@@ -158,10 +184,12 @@
 
 .pp-opt { display: flex; flex-direction: column; gap: 12px; }
 
+/* Field label for Color / Size / Quantity — sits below the 16px description in
+   the hierarchy, matching the breadcrumbs. */
 .pp-opt__label {
   font-family: var(--font-body);
   font-weight: 400;
-  font-size: 20px;
+  font-size: 14px;
   line-height: 1.25;
   color: var(--black);
 }
@@ -379,8 +407,7 @@
   }
   .pp-hero__media { flex: none; min-height: 0; aspect-ratio: 3 / 4; width: 100%; padding: 24px 16px; }
   .pp-hero__shirt { max-height: 100%; }
-  /* zoom-on-hover is pointless on touch — show full image, normal cursor */
-  .pp-hero__shirt { cursor: default; }
+  .pp-zoom-btn { right: 12px; bottom: 12px; }
   .pp-hero__info {
     width: 100%;
     padding: 24px 4px 8px;

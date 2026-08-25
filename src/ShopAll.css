@@ -256,6 +256,9 @@
     row-gap: 36px;
     padding: 16px 20px 40px;
   }
+  /* Full-width single column, so without an explicit ratio the card takes its
+     height from the near-square tee cutout and reads square. */
+  .sa-card__img { aspect-ratio: 4 / 5; }
   /* MIND OVER BODY pills stack centered above the FAQ card on mobile */
   .sa-mob { width: 200px; height: 180px; }
   .sa-mob__pill { font-size: 34px; }
